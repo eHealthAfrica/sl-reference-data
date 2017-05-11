@@ -4,6 +4,7 @@ library(tidyverse)
 library(tabulizer)
 library(RCurl)
 library(devtools)
+library(slreferencedata)
 
 cleanIntegerValues <- function(val) {
   as.integer(gsub(x=val, pattern=' |-', replacement=''))
@@ -243,55 +244,7 @@ byChiefdom <- bind_rows(byChiefdom) %>%
   rename(TotalPopulation=X2, MalePopulation=X3, FemalePopulation=X4, RuralPopulation=X5, RuralMalePopulation=X6,
          RuralFemalePopulation=X7, UrbanPopulation=X8, UrbanMalePopulation=X9, UrbanFemalePopulation=X10, CensusChiefdomName=X1, District=X11) %>%
   mutate_at(vars(-District, -CensusChiefdomName), cleanIntegerValues) %>% as_tibble() %>%
-  mutate(OCHAChiefdomName=case_when(
-    .$CensusChiefdomName=='Kandu Lekpeama' ~ 'Kandu Leppiama',
-    .$CensusChiefdomName=='Kenema City' ~ 'Kenema Town',
-    .$CensusChiefdomName=='Koidu/New' ~ 'Koidu Town',
-    .$CensusChiefdomName=='Gbanti-Kamaranka' ~ 'Gbanti Kamarank',
-    .$CensusChiefdomName=='Gbendembu Ngowahun' ~ 'Gbendembu Ngowa',
-    .$CensusChiefdomName=='Magbaimba Ndorhahun' ~ 'Magbaimba Ndorh',
-    .$CensusChiefdomName=='Sanda Tendaren' ~ 'Sanda Tendaran',
-    .$CensusChiefdomName=='Tambakka' ~ 'Tambakha',
-    .$CensusChiefdomName=='Makeni City' ~ 'Makeni Town',
-    .$CensusChiefdomName=='Gbinle-Dixing' ~ 'Gbinle Dixing',
-    .$CensusChiefdomName=='Dembelia Sinkunia' ~ 'Dembelia - Sink',
-    .$CensusChiefdomName=='Follosaba Dembelia' ~ 'Folosaba Dembel',
-    .$CensusChiefdomName=='Wara Wara Bafodia' ~ 'Wara Wara Bafod',
-    .$CensusChiefdomName=='Wara Wara Yagala' ~ 'Wara Wara Yagal',
-    .$CensusChiefdomName=='BKM' ~ 'Bureh Kasseh Ma',
-    .$CensusChiefdomName=='Sanda Magbolontor' ~ 'Sanda Magbolont',
-    .$CensusChiefdomName=='Kafe Simira' ~ 'Kafe Simiria',
-    .$CensusChiefdomName=='Kolifa Rowalla' ~ 'Kholifa Rowala',
-    .$CensusChiefdomName=='Kunike Sanda' ~ 'Kunike',
-    .$CensusChiefdomName=='Bagbwe' ~ 'Bagbwe(Bagbe)',
-    .$CensusChiefdomName=='Baoma' ~ 'Boama',
-    .$CensusChiefdomName=='Bumpe Ngawo' ~ 'Bumpe Ngao',
-    .$CensusChiefdomName=='Jaiama-Bongor' ~ 'Jaiama Bongor',
-    .$CensusChiefdomName=='Wunde' ~ 'Wonde',
-    .$CensusChiefdomName=='Bo City' ~ 'Bo Town',
-    .$CensusChiefdomName=='Bendu Cha' ~ 'Bendu-Cha',
-    .$CensusChiefdomName=='Imperi' ~ 'Imperri',
-    .$CensusChiefdomName=='Kpanga Kemo' ~ 'Kpanda Kemo',
-    .$CensusChiefdomName=='Sogbini' ~ 'Sogbeni',
-    .$CensusChiefdomName=='Gallinas Peri' ~ 'Galliness Perri',
-    .$CensusChiefdomName=='Kpanga-Kabonde' ~ 'Panga Kabonde',
-    .$CensusChiefdomName=='Mano Sakrim' ~ 'Mono Sakrim',
-    .$CensusChiefdomName=='Panga Krim' ~ 'Panga krim',
-    .$CensusChiefdomName=='Pejeh' ~ 'Pejeh(Futa peje',
-    .$CensusChiefdomName=='Mountain' ~ 'Mountain Rural',
-    .$CensusChiefdomName=='Waterloo' ~ 'Waterloo Rural',
-    .$CensusChiefdomName=='Central 1' ~ 'Central I',
-    .$CensusChiefdomName=='Central 2' ~ 'Central II',
-    .$CensusChiefdomName=='East 1' ~ 'East I',
-    .$CensusChiefdomName=='East 2' ~ 'East II',
-    .$CensusChiefdomName=='East 3' ~ 'East III',
-    .$CensusChiefdomName=='West 1' ~ 'West I',
-    .$CensusChiefdomName=='West 2' ~ 'West II',
-    .$CensusChiefdomName=='West 3' ~ 'West III',
-    .$District=='Western Area Rural' & .$CensusChiefdomName=='Koya' ~ 'Koya Rural',
-    is.na(.$CensusChiefdomName) ~ as.character(NA),
-    TRUE ~ .$CensusChiefdomName
-  ))
+  recodeCensusChiefdomToOCHA('CensusChiefdomName', 'District')
 
 Census2015ByChiefdom <- byChiefdom %>%
   select(District, CensusChiefdomName, OCHAChiefdomName, ends_with('Population'))

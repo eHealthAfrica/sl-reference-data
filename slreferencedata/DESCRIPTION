@@ -8,5 +8,7 @@ Authors@R: person("Scott", "Came", email = "scottcame10@gmail.com",
                   role = c("aut", "cre"))
 Description: Various Datasets Related to Sierra Leone
 License: GNU General Public License version 3 (GPL-3.0)
+Imports:
+  tidyverse
 LazyData: true
 RoxygenNote: 6.0.1
