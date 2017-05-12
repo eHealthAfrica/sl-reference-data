@@ -244,7 +244,7 @@ byChiefdom <- bind_rows(byChiefdom) %>%
   rename(TotalPopulation=X2, MalePopulation=X3, FemalePopulation=X4, RuralPopulation=X5, RuralMalePopulation=X6,
          RuralFemalePopulation=X7, UrbanPopulation=X8, UrbanMalePopulation=X9, UrbanFemalePopulation=X10, CensusChiefdomName=X1, District=X11) %>%
   mutate_at(vars(-District, -CensusChiefdomName), cleanIntegerValues) %>% as_tibble() %>%
-  recodeCensusChiefdomToOCHA('CensusChiefdomName', 'District')
+  recodeCensusChiefdomToOCHA('CensusChiefdomName', 'District', 'OCHAChiefdomName')
 
 Census2015ByChiefdom <- byChiefdom %>%
   select(District, CensusChiefdomName, OCHAChiefdomName, ends_with('Population'))

@@ -5,15 +5,15 @@
 #' @return The data frame, with a new column (OCHAChiefdomName) added
 #' @import tidyverse
 #' @export
-recodeCensusChiefdomToOCHA <- function(df, CensusChiefdomNameVariable, DistrictVariable) {
+recodeCensusChiefdomToOCHA <- function(df, CensusChiefdomNameVariable, DistrictVariable, OCHAChiefdomVariable) {
 
   # a bit of a hack, but will work...
-  if (any(c('temp___c', 'temp___d') %in% colnames(df))) {
-    stop('recodeCensusChiefdomToOCHA cannot accept a data frame arg with columns temp___c or temp___d')
+  if (any(c('temp___c', 'temp___d', 'temp___o') %in% colnames(df))) {
+    stop('recodeCensusChiefdomToOCHA cannot accept a data frame arg with columns temp___c, temp___d, or temp___o')
   }
 
   mutate_(df, 'temp___c'=CensusChiefdomNameVariable, 'temp___d'=DistrictVariable) %>%
-  mutate(OCHAChiefdomName=case_when(
+  mutate(temp___o=case_when(
     .$temp___c=='Kandu Lekpeama' ~ 'Kandu Leppiama',
     .$temp___c=='Kenema City' ~ 'Kenema Town',
     .$temp___c=='Koidu/New' ~ 'Koidu Town',
@@ -62,6 +62,7 @@ recodeCensusChiefdomToOCHA <- function(df, CensusChiefdomNameVariable, DistrictV
     is.na(.$temp___c) ~ as.character(NA),
     TRUE ~ .$temp___c
   )) %>%
+    rename_(.dots=setNames('temp___o', OCHAChiefdomVariable)) %>%
     select(-temp___c, -temp___d)
 
 }

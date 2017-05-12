@@ -4,7 +4,8 @@
 \alias{recodeCensusChiefdomToOCHA}
 \title{This function recodes Chiefdom names as reported by the Sierra Leone census to those used by UN OCHA}
 \usage{
-recodeCensusChiefdomToOCHA(df, CensusChiefdomNameVariable, DistrictVariable)
+recodeCensusChiefdomToOCHA(df, CensusChiefdomNameVariable, DistrictVariable,
+  OCHAChiefdomVariable)
 }
 \arguments{
 \item{df}{Data frame with columns for chiefdom name and district name}
