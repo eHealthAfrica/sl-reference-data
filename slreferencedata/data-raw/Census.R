@@ -144,7 +144,7 @@ popInternetUse <- extract_tables(pdfFile, pages=59, method='data.frame',
   select(-X) %>%
   rename(Households=X.1, HouseholdsInternetHome=X.2, HouseholdsInternetOffice=X.3, HouseholdsInternetCafe=X.4,
          HouseholdsInternetOther=X.5, HouseholdsInternetNone=X.6) %>%
-  mutate_at(vars(-District), cleanIntegerValues) %>% as_tibble()
+  mutate_at(vars(-District), cleanIntegerValues) %>% as_tibble() %>% select(-Households)
 
 pop <- inner_join(pop, popInternetUse, by='District')
 rm(popInternetUse)
@@ -155,10 +155,11 @@ popNearestMedical <- extract_tables(pdfFile, pages=75, method='data.frame',
   mutate(District=case_when(.$X=='Rural' ~ 'Western Area Rural',
                             .$X=='Urban' ~ 'Western Area Urban',
                             TRUE ~ .$X)) %>%
-  select(-X, -X.1) %>%
+  select(-X) %>%
   mutate(X.7=ifelse(District=='Western Area Urban', '11034', X.7))  %>%
   rename(HouseholdsNearestMedCompound=X.2, HouseholdsNearestMedHalfMile=X.3, HouseholdsNearestMedOneMile=X.4,
-         HouseholdsNearestMedFiveMiles=X.5, HouseholdsNearestMedFiveMilesPlus=X.6, HouseholdsNearestMedDontKnow=X.7) %>%
+         HouseholdsNearestMedFiveMiles=X.5, HouseholdsNearestMedFiveMilesPlus=X.6, HouseholdsNearestMedDontKnow=X.7,
+         Households=X.1) %>%
   mutate_at(vars(-District), cleanIntegerValues) %>% as_tibble()
 
 pop <- inner_join(pop, popNearestMedical, by='District')
