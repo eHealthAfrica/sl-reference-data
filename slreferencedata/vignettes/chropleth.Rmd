@@ -1,0 +1,37 @@
+---
+title: "Households with Mobile Phones in Sierra Leone"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Households with Mobile Phones in Sierra Leone}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This vignette demonstrates use of the objects exported by the `slreferencedata` package, in particular the district-level 2015 census results, and the district boundary shapefile.
+
+```{r graphics, fig.height=7, fig.width=7, message=FALSE, error=FALSE, warning=FALSE}
+
+library(tidyverse)
+library(ggplot2)
+
+DistrictData <- slreferencedata::Census2015ByDistrict %>% select(Households, HouseholdsMobilePhoneYes, District) %>%
+  mutate(MobilePhonePerHousehold=HouseholdsMobilePhoneYes/Households)
+
+districtShp <- slreferencedata::DistrictPolygons
+districtShpDf <- fortify(districtShp) %>%
+  inner_join(districtShp@data, by='id') %>%
+  inner_join(DistrictData, by=c('admin2Name'='District'))
+
+centroids <- coordinates(districtShp) %>% as_tibble() %>% rename(long=V1, lat=V2) %>%
+  mutate(DistrictLabel=districtShp@data$admin2Name)
+
+ggplot(data=districtShpDf, aes(x=long, y=lat, group=group)) +
+  geom_path(color="black") +
+  scale_fill_gradient(limits=c(0,1), low = "white", high = "steelblue", na.value = "grey90", guide = "colourbar") +
+  geom_polygon(aes(fill=MobilePhonePerHousehold)) +
+  geom_text(data=centroids, mapping=aes(x=long, y=lat, label=DistrictLabel), inherit.aes=FALSE, size=2.5) +
+  coord_map(projection="mercator") + theme_void() +
+  labs(title='Mobile Phones Per Household in Sierra Leone', caption='Source: 2015 Census of Population and Housing', fill=NULL)
+
+```
